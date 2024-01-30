@@ -1,0 +1,53 @@
+﻿@model CMS.Models.VisitModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>VisitModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="PatientId" class="control-label">Patient</label>
+                <select asp-for="PatientId" asp-items="@(new SelectList(ViewBag.Patients, "Id", "FullName"))" class="form-control">
+                    <option value="">Select Patient</option>
+                </select>
+                <span asp-validation-for="PatientId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EmployeeId" class="control-label">Employee</label>
+                <select asp-for="EmployeeId" asp-items="@(new SelectList(ViewBag.Employees, "Id", "FullName"))" class="form-control">
+                    <option value="">Select Employee</option>
+                </select>
+                <span asp-validation-for="EmployeeId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="VisitTime" class="control-label">Visit Time</label>
+                <input asp-for="VisitTime" class="form-control" />
+                <span asp-validation-for="VisitTime" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
