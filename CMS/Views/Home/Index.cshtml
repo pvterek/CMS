@@ -1,8 +1,42 @@
-﻿@{
+﻿@model CMS.ViewModels.VisitsViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h2>Welcome in the <b>C</b>linic <b>M</b>anagement <b>S</b>oftware</h2>
+<h3>Today visits:</h3>
+@if (Model != null && Model.Visits.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Visit Time</th>
+                <th>Patient</th>
+                <th>Employee</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach (var visit in Model.Visits)
+                {
+                    <tr>
+                        <td>
+                            @visit.VisitTime
+                        </td>
+                        <td>
+                            @visit.PatientFullName
+                        </td>
+                        <td>
+                            @visit.EmployeeFullName
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No visits found.</p>
+}

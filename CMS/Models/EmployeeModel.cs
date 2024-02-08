@@ -1,8 +1,11 @@
-﻿namespace CMS.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CMS.Models
 {
     public class EmployeeModel
     {
-        public int Id { get; set; }
+        [Key]
+        public int EmployeeId { get; set; }
 
         public string Name { get; set; }
 

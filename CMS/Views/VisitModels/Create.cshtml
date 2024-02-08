@@ -1,4 +1,4 @@
-﻿@model CMS.Models.VisitModel
+﻿@model CMS.ViewModels.VisitPatientEmployeeViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -12,29 +12,33 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
             <div class="form-group">
-                <label asp-for="PatientId" class="control-label">Patient</label>
-                <select asp-for="PatientId" asp-items="@(new SelectList(ViewBag.Patients, "Id", "FullName"))" class="form-control">
-                    <option value="">Select Patient</option>
+                <label asp-for="Visit.PatientId" class="control-label"></label>
+                <select asp-for="Visit.PatientId" class="form-control">
+                    <option value="">-- Select Patient --</option>
+                    @foreach (var item in Model.Patients)
+                    {
+                        <option value="@item.PatientId">@item.FullName</option>
+                    }
                 </select>
-                <span asp-validation-for="PatientId" class="text-danger"></span>
+                <span asp-validation-for="Visit.PatientId" class="text-danger"></span>
             </div>
-
             <div class="form-group">
-                <label asp-for="EmployeeId" class="control-label">Employee</label>
-                <select asp-for="EmployeeId" asp-items="@(new SelectList(ViewBag.Employees, "Id", "FullName"))" class="form-control">
-                    <option value="">Select Employee</option>
+                <label asp-for="Visit.EmployeeId" class="control-label"></label>
+                <select asp-for="Visit.EmployeeId" class="form-control">
+                    <option value="">-- Select Employee --</option>
+                    @foreach (var item in Model.Employees)
+                    {
+                        <option value="@item.EmployeeId">@item.Name</option>
+                    }
                 </select>
-                <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                <span asp-validation-for="Visit.EmployeeId" class="text-danger"></span>
             </div>
-
             <div class="form-group">
-                <label asp-for="VisitTime" class="control-label">Visit Time</label>
-                <input asp-for="VisitTime" class="form-control" />
-                <span asp-validation-for="VisitTime" class="text-danger"></span>
+                <label asp-for="Visit.VisitTime" class="control-label"></label>
+                <input asp-for="Visit.VisitTime" class="form-control" />
+                <span asp-validation-for="Visit.VisitTime" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -42,12 +46,11 @@
     </div>
 </div>
 
+
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

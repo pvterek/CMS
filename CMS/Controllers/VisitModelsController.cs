@@ -1,5 +1,6 @@
 ﻿using CMS.Data;
 using CMS.Models;
+using CMS.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,17 +8,17 @@ namespace CMS.Controllers
 {
     public class VisitModelsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _db;
 
-        public VisitModelsController(ApplicationDbContext context)
+        public VisitModelsController(ApplicationDbContext db)
         {
-            _context = context;
+            _db = db;
         }
 
         // GET: VisitModels
         public async Task<IActionResult> Index()
         {
-            return View(await _context.VisitModel.ToListAsync());
+            return View(await _db.VisitModel.ToListAsync());
         }
 
         // GET: VisitModels/Details/5
@@ -28,8 +29,8 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var visitModel = await _context.VisitModel
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var visitModel = await _db.VisitModel
+                .FirstOrDefaultAsync(m => m.VisitId == id);
             if (visitModel == null)
             {
                 return NotFound();
@@ -41,10 +42,18 @@ namespace CMS.Controllers
         // GET: VisitModels/Create
         public IActionResult Create()
         {
-            ViewBag.Patients = _context.PatientModel.Select(p => new { p.Id, p.FullName }).ToList();
-            ViewBag.Employees = _context.EmployeeModel.Select(e => new { e.Id, e.FullName }).ToList();
+            var visit = new VisitModel();
+            var patients = _db.PatientModel.ToList();
+            var employees = _db.EmployeeModel.ToList();
 
-            return View();
+            var viewModel = new VisitPatientEmployeeViewModel
+            {
+                Visit = visit,
+                Patients = patients,
+                Employees = employees
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -52,14 +61,11 @@ namespace CMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(visit);
-                await _context.SaveChangesAsync();
+                _db.Add(visit);
+                await _db.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewBag.Patients = _context.PatientModel.Select(p => new { p.Id, p.FullName }).ToList();
-            ViewBag.Employees = _context.EmployeeModel.Select(e => new { e.Id, e.FullName }).ToList();
 
             return View(visit);
         }
@@ -72,7 +78,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var visitModel = await _context.VisitModel.FindAsync(id);
+            var visitModel = await _db.VisitModel.FindAsync(id);
             if (visitModel == null)
             {
                 return NotFound();
@@ -87,7 +93,7 @@ namespace CMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,VisitTime")] VisitModel visitModel)
         {
-            if (id != visitModel.Id)
+            if (id != visitModel.VisitId)
             {
                 return NotFound();
             }
@@ -96,12 +102,12 @@ namespace CMS.Controllers
             {
                 try
                 {
-                    _context.Update(visitModel);
-                    await _context.SaveChangesAsync();
+                    _db.Update(visitModel);
+                    await _db.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VisitModelExists(visitModel.Id))
+                    if (!VisitModelExists(visitModel.VisitId))
                     {
                         return NotFound();
                     }
@@ -123,8 +129,8 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var visitModel = await _context.VisitModel
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var visitModel = await _db.VisitModel
+                .FirstOrDefaultAsync(m => m.VisitId == id);
             if (visitModel == null)
             {
                 return NotFound();
@@ -138,19 +144,19 @@ namespace CMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var visitModel = await _context.VisitModel.FindAsync(id);
+            var visitModel = await _db.VisitModel.FindAsync(id);
             if (visitModel != null)
             {
-                _context.VisitModel.Remove(visitModel);
+                _db.VisitModel.Remove(visitModel);
             }
 
-            await _context.SaveChangesAsync();
+            await _db.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool VisitModelExists(int id)
         {
-            return _context.VisitModel.Any(e => e.Id == id);
+            return _db.VisitModel.Any(e => e.VisitId == id);
         }
     }
 }

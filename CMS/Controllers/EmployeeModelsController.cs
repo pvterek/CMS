@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CMS.Data;
+﻿using CMS.Data;
 using CMS.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Controllers
 {
@@ -34,7 +29,7 @@ namespace CMS.Controllers
             }
 
             var employeeModel = await _context.EmployeeModel
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.EmployeeId == id);
             if (employeeModel == null)
             {
                 return NotFound();
@@ -88,7 +83,7 @@ namespace CMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Birthday,Profession")] EmployeeModel employeeModel)
         {
-            if (id != employeeModel.Id)
+            if (id != employeeModel.EmployeeId)
             {
                 return NotFound();
             }
@@ -102,7 +97,7 @@ namespace CMS.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeModelExists(employeeModel.Id))
+                    if (!EmployeeModelExists(employeeModel.EmployeeId))
                     {
                         return NotFound();
                     }
@@ -125,7 +120,7 @@ namespace CMS.Controllers
             }
 
             var employeeModel = await _context.EmployeeModel
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.EmployeeId == id);
             if (employeeModel == null)
             {
                 return NotFound();
@@ -151,7 +146,7 @@ namespace CMS.Controllers
 
         private bool EmployeeModelExists(int id)
         {
-            return _context.EmployeeModel.Any(e => e.Id == id);
+            return _context.EmployeeModel.Any(e => e.EmployeeId == id);
         }
     }
 }
