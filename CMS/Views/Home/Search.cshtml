@@ -1,0 +1,21 @@
+﻿@model CMS.Models.VisitModel
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h1>Search</h1>
+
+<form method="post" action="@Url.Action("Search", "Home")">
+    <div class="text-center">
+        <div class="form-group">
+            <label class="control-label">Visit Time</label>
+            <input type="datetime-local" class="form-control" name="date" />
+            <span class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </div>
+</form>

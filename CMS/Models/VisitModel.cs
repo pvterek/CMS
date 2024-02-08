@@ -4,7 +4,8 @@ namespace CMS.Models
 {
     public class VisitModel
     {
-        public int Id { get; set; }
+        [Key]
+        public int VisitId { get; set; }
 
 
         [Required(ErrorMessage = "Please select a patient.")]
@@ -18,7 +19,7 @@ namespace CMS.Models
         [Required(ErrorMessage = "Please enter a visit time.")]
         public DateTime VisitTime { get; set; }
 
-        //public EmployeeModel AddedBy { get; set; }
+        //public int AddedBy { get; set; }
 
         public VisitModel()
         {

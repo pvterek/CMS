@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CMS.Data;
+﻿using CMS.Data;
 using CMS.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Controllers
 {
@@ -34,7 +29,7 @@ namespace CMS.Controllers
             }
 
             var patientModel = await _context.PatientModel
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.PatientId == id);
             if (patientModel == null)
             {
                 return NotFound();
@@ -88,7 +83,7 @@ namespace CMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Birthday")] PatientModel patientModel)
         {
-            if (id != patientModel.Id)
+            if (id != patientModel.PatientId)
             {
                 return NotFound();
             }
@@ -102,7 +97,7 @@ namespace CMS.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PatientModelExists(patientModel.Id))
+                    if (!PatientModelExists(patientModel.PatientId))
                     {
                         return NotFound();
                     }
@@ -125,7 +120,7 @@ namespace CMS.Controllers
             }
 
             var patientModel = await _context.PatientModel
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.PatientId == id);
             if (patientModel == null)
             {
                 return NotFound();
@@ -151,7 +146,7 @@ namespace CMS.Controllers
 
         private bool PatientModelExists(int id)
         {
-            return _context.PatientModel.Any(e => e.Id == id);
+            return _context.PatientModel.Any(e => e.PatientId == id);
         }
     }
 }

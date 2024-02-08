@@ -14,7 +14,7 @@ namespace CMS.Data.Migrations
                 name: "EmployeeModel",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    EmployeeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -23,14 +23,14 @@ namespace CMS.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeModel", x => x.Id);
+                    table.PrimaryKey("PK_EmployeeModel", x => x.EmployeeId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "PatientModel",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    PatientId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -38,14 +38,14 @@ namespace CMS.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PatientModel", x => x.Id);
+                    table.PrimaryKey("PK_PatientModel", x => x.PatientId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "VisitModel",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    VisitId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PatientId = table.Column<int>(type: "int", nullable: false),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
@@ -54,24 +54,24 @@ namespace CMS.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VisitModel", x => x.Id);
+                    table.PrimaryKey("PK_VisitModel", x => x.VisitId);
                     table.ForeignKey(
                         name: "FK_VisitModel_EmployeeModel_AddedById",
                         column: x => x.AddedById,
                         principalTable: "EmployeeModel",
-                        principalColumn: "Id",
+                        principalColumn: "EmployeeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_VisitModel_EmployeeModel_EmployeeId",
                         column: x => x.EmployeeId,
                         principalTable: "EmployeeModel",
-                        principalColumn: "Id",
+                        principalColumn: "EmployeeId",
                         onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_VisitModel_PatientModel_PatientId",
                         column: x => x.PatientId,
                         principalTable: "PatientModel",
-                        principalColumn: "Id",
+                        principalColumn: "PatientId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
