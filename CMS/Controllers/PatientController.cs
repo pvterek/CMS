@@ -5,22 +5,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Controllers
 {
-    public class EmployeeModelsController : Controller
+    public class PatientController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public EmployeeModelsController(ApplicationDbContext context)
+        public PatientController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: EmployeeModels
+        // GET: PatientModels
         public async Task<IActionResult> Index()
         {
-            return View(await _context.EmployeeModel.ToListAsync());
+            return View(await _context.Patient.ToListAsync());
         }
 
-        // GET: EmployeeModels/Details/5
+        // GET: PatientModels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -28,39 +28,39 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var employeeModel = await _context.EmployeeModel
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
-            if (employeeModel == null)
+            var patientModel = await _context.Patient
+                .FirstOrDefaultAsync(m => m.PatientId == id);
+            if (patientModel == null)
             {
                 return NotFound();
             }
 
-            return View(employeeModel);
+            return View(patientModel);
         }
 
-        // GET: EmployeeModels/Create
+        // GET: PatientModels/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: EmployeeModels/Create
+        // POST: PatientModels/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Birthday,Profession")] EmployeeModel employeeModel)
+        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Birthday")] Patient patient)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(employeeModel);
+                _context.Add(patient);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(employeeModel);
+            return View(patient);
         }
 
-        // GET: EmployeeModels/Edit/5
+        // GET: PatientModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -68,22 +68,22 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var employeeModel = await _context.EmployeeModel.FindAsync(id);
-            if (employeeModel == null)
+            var patient = await _context.Patient.FindAsync(id);
+            if (patient == null)
             {
                 return NotFound();
             }
-            return View(employeeModel);
+            return View(patient);
         }
 
-        // POST: EmployeeModels/Edit/5
+        // POST: PatientModels/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Birthday,Profession")] EmployeeModel employeeModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Birthday")] Patient patient)
         {
-            if (id != employeeModel.EmployeeId)
+            if (id != patient.PatientId)
             {
                 return NotFound();
             }
@@ -92,12 +92,12 @@ namespace CMS.Controllers
             {
                 try
                 {
-                    _context.Update(employeeModel);
+                    _context.Update(patient);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeModelExists(employeeModel.EmployeeId))
+                    if (!PatientExists(patient.PatientId))
                     {
                         return NotFound();
                     }
@@ -108,10 +108,10 @@ namespace CMS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(employeeModel);
+            return View(patient);
         }
 
-        // GET: EmployeeModels/Delete/5
+        // GET: PatientModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -119,34 +119,34 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var employeeModel = await _context.EmployeeModel
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
-            if (employeeModel == null)
+            var patient = await _context.Patient
+                .FirstOrDefaultAsync(m => m.PatientId == id);
+            if (patient == null)
             {
                 return NotFound();
             }
 
-            return View(employeeModel);
+            return View(patient);
         }
 
-        // POST: EmployeeModels/Delete/5
+        // POST: PatientModels/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var employeeModel = await _context.EmployeeModel.FindAsync(id);
-            if (employeeModel != null)
+            var patient = await _context.Patient.FindAsync(id);
+            if (patient != null)
             {
-                _context.EmployeeModel.Remove(employeeModel);
+                _context.Patient.Remove(patient);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeModelExists(int id)
+        private bool PatientExists(int id)
         {
-            return _context.EmployeeModel.Any(e => e.EmployeeId == id);
+            return _context.Patient.Any(e => e.PatientId == id);
         }
     }
 }

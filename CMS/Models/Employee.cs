@@ -2,7 +2,7 @@
 
 namespace CMS.Models
 {
-    public class EmployeeModel
+    public class Employee
     {
         [Key]
         public int EmployeeId { get; set; }
@@ -17,7 +17,7 @@ namespace CMS.Models
 
         public string FullName => $"{Name} {Surname}".Trim();
 
-        public EmployeeModel()
+        public Employee()
         {
 
         }

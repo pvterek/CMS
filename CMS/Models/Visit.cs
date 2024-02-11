@@ -2,7 +2,7 @@
 
 namespace CMS.Models
 {
-    public class VisitModel
+    public class Visit
     {
         [Key]
         public int VisitId { get; set; }
@@ -21,7 +21,7 @@ namespace CMS.Models
 
         //public int AddedBy { get; set; }
 
-        public VisitModel()
+        public Visit()
         {
 
         }
