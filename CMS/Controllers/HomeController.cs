@@ -25,10 +25,10 @@ namespace CMS.Controllers
 
             var visitsViewModel = new VisitsViewModel
             {
-                Visits = await _db.VisitModel
+                Visits = await _db.Visit
                     .Where(p => p.VisitTime >= todayStart && p.VisitTime <= todayEnd)
-                    .Join(_db.PatientModel, visit => visit.PatientId, patient => patient.PatientId, (visit, patient) => new { visit, patient })
-                    .Join(_db.EmployeeModel, vp => vp.visit.EmployeeId, employee => employee.EmployeeId, (vp, employee) => new VisitViewModel
+                    .Join(_db.Patient, visit => visit.PatientId, patient => patient.PatientId, (visit, patient) => new { visit, patient })
+                    .Join(_db.Employee, vp => vp.visit.EmployeeId, employee => employee.EmployeeId, (vp, employee) => new VisitViewModel
                     {
                         PatientFullName = vp.patient.FullName,
                         EmployeeFullName = employee.FullName,
@@ -43,7 +43,7 @@ namespace CMS.Controllers
         [HttpPost]
         public IActionResult Search(DateTime date)
         {
-            List<VisitModel> visits = _db.VisitModel
+            List<Visit> visits = _db.Visit
                 .Where(p => p.VisitTime >= date) //&& p.VisitTime <= DateTime.Today)
                 .ToList();
 

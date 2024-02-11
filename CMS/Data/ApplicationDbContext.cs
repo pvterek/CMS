@@ -10,8 +10,8 @@ namespace CMS.Data
             : base(options)
         {
         }
-        public DbSet<VisitModel> VisitModel { get; set; } = default!;
-        public DbSet<PatientModel> PatientModel { get; set; } = default!;
-        public DbSet<EmployeeModel> EmployeeModel { get; set; } = default!;
+        public DbSet<Visit> Visit { get; set; } = default!;
+        public DbSet<Patient> Patient { get; set; } = default!;
+        public DbSet<Employee> Employee { get; set; } = default!;
     }
 }

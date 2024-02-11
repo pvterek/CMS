@@ -2,7 +2,7 @@
 
 namespace CMS.Models
 {
-    public class PatientModel
+    public class Patient
     {
         [Key]
         public int PatientId { get; set; }
@@ -15,7 +15,7 @@ namespace CMS.Models
 
         public string FullName => $"{Name} {Surname}".Trim();
 
-        public PatientModel()
+        public Patient()
         {
 
         }
