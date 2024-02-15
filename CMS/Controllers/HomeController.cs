@@ -21,23 +21,20 @@ namespace CMS.Controllers
         public async Task<IActionResult> Index()
         {
             DateTime todayStart = DateTime.Today;
-            DateTime todayEnd = DateTime.Today.AddDays(1).AddTicks(-1);
+            DateTime todayEnd = DateTime.Today.AddDays(1);
 
-            var visitsViewModel = new VisitsViewModel
-            {
-                Visits = await _db.Visit
+            var visits = await _db.Visit
                     .Where(p => p.VisitTime >= todayStart && p.VisitTime <= todayEnd)
                     .Join(_db.Patient, visit => visit.PatientId, patient => patient.PatientId, (visit, patient) => new { visit, patient })
                     .Join(_db.Employee, vp => vp.visit.EmployeeId, employee => employee.EmployeeId, (vp, employee) => new VisitViewModel
                     {
-                        PatientFullName = vp.patient.FullName,
-                        EmployeeFullName = employee.FullName,
-                        VisitTime = vp.visit.VisitTime
+                        Visit = vp.visit,
+                        Patient = vp.patient,
+                        Employee = employee
                     })
-                    .ToListAsync()
-            };
+                    .ToListAsync();
 
-            return View(visitsViewModel);
+            return View(visits);
         }
 
         [HttpPost]

@@ -1,23 +1,43 @@
-﻿@model CMS.Models.Visit
+﻿@model CMS.ViewModels.VisitPatientEmployeeViewModel
 
 @{
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>VisitModel</h4>
+<h4>Edit visit details</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="VisitId" />
+            <input type="hidden" asp-for="Visit.VisitId" />
             <div class="form-group">
-                <label asp-for="VisitTime" class="control-label"></label>
-                <input asp-for="VisitTime" class="form-control" />
-                <span asp-validation-for="VisitTime" class="text-danger"></span>
+                <label asp-for="Visit.PatientId" class="control-label">Patient</label>
+                <select asp-for="Visit.PatientId" class="form-control">
+                    <option value="">-- Select patient --</option>
+                    @foreach (var item in Model.Patients)
+                    {
+                        <option value="@item.PatientId">@item.FullName</option>
+                    }
+                </select>
+                <span asp-validation-for="Visit.PatientId" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Visit.EmployeeId" class="control-label">Employee</label>
+                <select asp-for="Visit.EmployeeId" class="form-control">
+                    <option value="">-- Select employee --</option>
+                    @foreach (var item in Model.Employees)
+                    {
+                        <option value="@item.EmployeeId">@item.FullName</option>
+                    }
+                </select>
+                <span asp-validation-for="Visit.EmployeeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Visit.VisitTime" class="control-label">Time of the visit</label>
+                <input asp-for="Visit.VisitTime" class="form-control" />
+                <span asp-validation-for="Visit.VisitTime" class="text-danger"></span>
+            </div><br />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

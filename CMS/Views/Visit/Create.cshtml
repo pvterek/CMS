@@ -15,7 +15,7 @@
             <div class="form-group">
                 <label asp-for="Visit.PatientId" class="control-label"></label>
                 <select asp-for="Visit.PatientId" class="form-control">
-                    <option value="">-- Select Patient --</option>
+                    <option value="">-- Select patient --</option>
                     @foreach (var item in Model.Patients)
                     {
                         <option value="@item.PatientId">@item.FullName</option>
@@ -26,7 +26,7 @@
             <div class="form-group">
                 <label asp-for="Visit.EmployeeId" class="control-label"></label>
                 <select asp-for="Visit.EmployeeId" class="form-control">
-                    <option value="">-- Select Employee --</option>
+                    <option value="">-- Select employee --</option>
                     @foreach (var item in Model.Employees)
                     {
                         <option value="@item.EmployeeId">@item.Name</option>
