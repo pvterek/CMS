@@ -1,9 +1,11 @@
-﻿namespace CMS.ViewModels
+﻿using CMS.Models;
+
+namespace CMS.ViewModels
 {
     public class VisitViewModel
     {
-        public string PatientFullName { get; set; }
-        public string EmployeeFullName { get; set; }
-        public DateTime VisitTime { get; set; }
+        public Visit Visit { get; set; }
+        public Patient Patient { get; set; }
+        public Employee Employee { get; set; }
     }
 }

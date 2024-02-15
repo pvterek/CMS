@@ -49,7 +49,7 @@ namespace CMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Surname,Birthday")] Patient patient)
+        public async Task<IActionResult> Create([Bind("PatientId,Name,Surname,Birthday")] Patient patient)
         {
             if (ModelState.IsValid)
             {
@@ -81,7 +81,7 @@ namespace CMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,Birthday")] Patient patient)
+        public async Task<IActionResult> Edit(int id, [Bind("PatientId,Name,Surname,Birthday")] Patient patient)
         {
             if (id != patient.PatientId)
             {

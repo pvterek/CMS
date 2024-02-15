@@ -18,8 +18,32 @@ namespace CMS.Controllers
         // GET: VisitModels
         public async Task<IActionResult> Index()
         {
-            return View(await _db.Visit.ToListAsync());
+            var visitsWithPatientsQuery =
+                from visit in _db.Visit
+                join patient in _db.Patient on visit.PatientId equals patient.PatientId into patients
+                from patient in patients.DefaultIfEmpty()
+                select new
+                {
+                    visit,
+                    patient
+                };
+
+            var visitsWithEmployeesQuery =
+                from vp in visitsWithPatientsQuery
+                join employee in _db.Employee on vp.visit.EmployeeId equals employee.EmployeeId into employees
+                from employee in employees.DefaultIfEmpty()
+                select new VisitViewModel
+                {
+                    Visit = vp.visit,
+                    Patient = vp.patient,
+                    Employee = employee
+                };
+
+            var visits = await visitsWithEmployeesQuery.ToListAsync();
+
+            return View(visits);
         }
+
 
         // GET: VisitModels/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -40,17 +64,13 @@ namespace CMS.Controllers
         }
 
         // GET: VisitModels/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var visit = new Visit();
-            var patients = _db.Patient.ToList();
-            var employees = _db.Employee.ToList();
-
-            var viewModel = new VisitPatientEmployeeViewModel
+            VisitPatientEmployeeViewModel viewModel = new()
             {
-                Visit = visit,
-                Patients = patients,
-                Employees = employees
+                Visit = new() { VisitTime = DateTime.Today },
+                Patients = await _db.Patient.ToListAsync(),
+                Employees = await _db.Employee.ToListAsync()
             };
 
             return View(viewModel);
@@ -83,7 +103,15 @@ namespace CMS.Controllers
             {
                 return NotFound();
             }
-            return View(visit);
+
+            VisitPatientEmployeeViewModel visitDetails = new()
+            {
+                Visit = visit,
+                Patients = await _db.Patient.ToListAsync(),
+                Employees = await _db.Employee.ToListAsync()
+            };
+
+            return View(visitDetails);
         }
 
         // POST: VisitModels/Edit/5
@@ -91,7 +119,7 @@ namespace CMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,VisitTime")] Visit visit)
+        public async Task<IActionResult> Edit(int id, [Bind("VisitId,PatientId,EmployeeId,VisitTime")] Visit visit)
         {
             if (id != visit.VisitId)
             {

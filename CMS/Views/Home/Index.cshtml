@@ -1,4 +1,4 @@
-﻿@model CMS.ViewModels.VisitsViewModel
+﻿@model IEnumerable<CMS.ViewModels.VisitViewModel>
 
 @{
     ViewData["Title"] = "Home Page";
@@ -6,32 +6,30 @@
 
 <h2>Welcome in the <b>C</b>linic <b>M</b>anagement <b>S</b>oftware</h2>
 <h3>Today visits:</h3>
-@if (Model != null && Model.Visits.Any())
+@if (Model != null && Model.Any())
 {
     <table class="table">
         <thead>
             <tr>
-                <th>Visit Time</th>
+                <th>Visit time</th>
                 <th>Patient</th>
                 <th>Employee</th>
             </tr>
         </thead>
         <tbody>
-            @{
-                foreach (var visit in Model.Visits)
-                {
-                    <tr>
-                        <td>
-                            @visit.VisitTime
-                        </td>
-                        <td>
-                            @visit.PatientFullName
-                        </td>
-                        <td>
-                            @visit.EmployeeFullName
-                        </td>
-                    </tr>
-                }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Visit.VisitTime
+                    </td>
+                    <td>
+                        @item.Patient.FullName
+                    </td>
+                    <td>
+                        @item.Employee.FullName
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
