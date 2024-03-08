@@ -1,12 +1,32 @@
-﻿@model IEnumerable<CMS.ViewModels.VisitViewModel>
+﻿@model CMS.ViewModels.CalendarViewModel
 
 @{
     ViewData["Title"] = "Home Page";
+
+    string prevDate = Model.CurrentDate.AddDays(-1).ToString("yyyy-MM-dd");
+    string nextDate = Model.CurrentDate.AddDays(1).ToString("yyyy-MM-dd");
 }
 
-<h2>Welcome in the <b>C</b>linic <b>M</b>anagement <b>S</b>oftware</h2>
-<h3>Today visits:</h3>
-@if (Model != null && Model.Any())
+<h2 class="text-center"><b>C</b>linic <b>M</b>anagement <b>S</b>oftware</h2>
+<br />
+
+<form method="get" action="@Url.Action("Index")">
+    <div class="text-center d-flex justify-content-center align-items-center">
+        <a href="@Url.Action("Index", new { date = prevDate })" class="btn btn-secondary">Previous Day</a>
+
+        <input type="date" id="datePicker" name="date" class="form-control me-2" style="width: auto;" value="@Model.CurrentDate.ToString("yyyy-MM-dd")" />
+
+        <a href="@Url.Action("Index", new { date = nextDate })" class="btn btn-secondary">Next Day</a>
+    </div>
+    <div class="text-center d-flex justify-content-center align-items-center">
+        <button type="submit" class="btn btn-primary">Submit Date</button>
+    </div>
+
+</form>
+<br />
+
+
+@if (Model != null && Model.Visits.Any())
 {
     <table class="table">
         <thead>
@@ -17,7 +37,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Visits)
             {
                 <tr>
                     <td>
@@ -36,5 +56,6 @@
 }
 else
 {
-    <p>No visits found.</p>
+    <br />
+    <p class="text-center">No visits found for @Model.CurrentDate.ToString("yyyy-MM-dd").</p>
 }
