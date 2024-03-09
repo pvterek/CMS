@@ -1,4 +1,5 @@
 ﻿using CMS.Models;
+using CMS.Models.Interfaces;
 using CMS.ViewModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,25 @@ namespace CMS.Data
                     Employee = employee
                 })
                 .ToListAsync();
+        }
+
+        public DbSet<T> GetDbSet<T>() where T : class
+        {
+            var property = GetType().GetProperties().FirstOrDefault(p => p.PropertyType == typeof(DbSet<T>));
+            if (property != null)
+            {
+                return property.GetValue(this) as DbSet<T>;
+            }
+
+            throw new InvalidOperationException($"DbSet<{typeof(T).Name}> not found.");
+        }
+
+        public async Task<List<T>> GetPersonByName<T>(string name) where T : class, IFullName
+        {
+            var dbSet = GetDbSet<T>();
+            var query = dbSet.AsQueryable();
+
+            return await query.Where(p => EF.Functions.Like(p.Name, $"%{name}%") || EF.Functions.Like(p.Surname, $"%{name}%")).ToListAsync();
         }
     }
 }

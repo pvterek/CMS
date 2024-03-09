@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CMS.Models.Interfaces;
 
 namespace CMS.Models
 {
-    public class Patient
+    public class Patient : IFullName
     {
         [Key]
         public int PatientId { get; set; }

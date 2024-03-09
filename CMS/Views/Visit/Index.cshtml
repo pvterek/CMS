@@ -1,12 +1,15 @@
 ﻿@model IEnumerable<CMS.ViewModels.VisitViewModel>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Manage visits";
 }
 
-<h1>Visits</h1>
-<p>
-    <a asp-action="Create">Add new</a>
-</p>
+<h1>Manage visits</h1>
+
+<div>
+    <a asp-action="Create" class="btn btn-primary">Add new</a>
+</div>
+
+
 @if (Model != null && Model.Any())
 {
     <table class="table">
@@ -32,9 +35,9 @@
                         @item.Employee.FullName
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Visit.VisitId">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Visit.VisitId">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Visit.VisitId">Delete</a>
+                        <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@item.Visit.VisitId">Edit</a> |
+                        <a asp-action="Details" class="btn btn-secondary" asp-route-id="@item.Visit.VisitId">Details</a> |
+                        <a asp-action="Delete" class="btn btn-secondary" asp-route-id="@item.Visit.VisitId">Delete</a>
                     </td>
                 </tr>
             }
@@ -43,5 +46,9 @@
 }
 else
 {
-    <p>No visits found.</p>
+    <div class="spacing row justify-content-center">
+        <div class="col-md-6">
+            <p class="text-center alert alert-info">No visits found.</p>
+        </div>
+    </div>
 }
