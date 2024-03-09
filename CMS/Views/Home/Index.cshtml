@@ -7,55 +7,57 @@
     string nextDate = Model.CurrentDate.AddDays(1).ToString("yyyy-MM-dd");
 }
 
-<h2 class="text-center"><b>C</b>linic <b>M</b>anagement <b>S</b>oftware</h2>
-<br />
+<h1>Dashboard</h1>
 
-<form method="get" action="@Url.Action("Index")">
+<form asp-controller="Home" asp-action="Index" method="get" class="date-picker-form">
     <div class="text-center d-flex justify-content-center align-items-center">
-        <a href="@Url.Action("Index", new { date = prevDate })" class="btn btn-secondary">Previous Day</a>
-
-        <input type="date" id="datePicker" name="date" class="form-control me-2" style="width: auto;" value="@Model.CurrentDate.ToString("yyyy-MM-dd")" />
-
-        <a href="@Url.Action("Index", new { date = nextDate })" class="btn btn-secondary">Next Day</a>
+        <a asp-action="Index" asp-route-date="@prevDate" class="btn btn-secondary" aria-label="Previous Day">Previous day</a>
+        <input type="date" id="datePicker" name="date" class="form-control mx-2" value="@Model.CurrentDate.ToString("yyyy-MM-dd")" aria-label="Select a date" />
+        <a asp-action="Index" asp-route-date="@nextDate" class="btn btn-secondary" aria-label="Next Day"> Next day</a>
     </div>
-    <div class="text-center d-flex justify-content-center align-items-center">
-        <button type="submit" class="btn btn-primary">Submit Date</button>
-    </div>
-
 </form>
-<br />
 
 
 @if (Model != null && Model.Visits.Any())
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Visit time</th>
-                <th>Patient</th>
-                <th>Employee</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Visits)
-            {
+    <div class="spacing">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>
-                        @item.Visit.VisitTime
-                    </td>
-                    <td>
-                        @item.Patient.FullName
-                    </td>
-                    <td>
-                        @item.Employee.FullName
-                    </td>
+                    <th>Visit Time</th>
+                    <th>Patient</th>
+                    <th>Employee</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var visit in Model.Visits)
+                {
+                    <tr>
+                        <td>@visit.Visit.VisitTime</td>
+                        <td>@visit.Patient.FullName</td>
+                        <td>@visit.Employee.FullName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 else
 {
-    <br />
-    <p class="text-center">No visits found for @Model.CurrentDate.ToString("yyyy-MM-dd").</p>
+    <div class="spacing row justify-content-center">
+        <div class="col-md-6">
+            <p class="text-center alert alert-info">No visits found for @Model.CurrentDate.ToString("yyyy-MM-dd").</p>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var datePicker = document.getElementById('datePicker');
+            datePicker.addEventListener('change', function () {
+                this.form.submit();
+            });
+        });
+    </script>
 }

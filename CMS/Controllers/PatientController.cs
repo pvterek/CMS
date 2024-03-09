@@ -15,9 +15,13 @@ namespace CMS.Controllers
         }
 
         // GET: PatientModels
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? patient)
         {
-            return View(await _context.Patient.ToListAsync());
+            var patients = string.IsNullOrEmpty(patient)
+                ? await _context.Patient.ToListAsync()
+                : await _context.GetPersonByName<Patient>(patient);
+
+            return View(patients);
         }
 
         // GET: PatientModels/Details/5

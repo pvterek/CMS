@@ -15,9 +15,13 @@ namespace CMS.Controllers
         }
 
         // GET: EmployeeModels
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? employee)
         {
-            return View(await _context.Employee.ToListAsync());
+            var employees = string.IsNullOrEmpty(employee)
+                ? await _context.Employee.ToListAsync()
+                : await _context.GetPersonByName<Employee>(employee);
+
+            return View(employees);
         }
 
         // GET: EmployeeModels/Details/5
