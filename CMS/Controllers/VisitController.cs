@@ -6,21 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Controllers
 {
-    public class VisitController : Controller
+    public class VisitController(ApplicationDbContext context) : Controller
     {
-        private readonly ApplicationDbContext _db;
-
-        public VisitController(ApplicationDbContext db)
-        {
-            _db = db;
-        }
 
         // GET: VisitModels
         public async Task<IActionResult> Index()
         {
             var visitsWithPatientsQuery =
-                from visit in _db.Visit
-                join patient in _db.Patient on visit.PatientId equals patient.PatientId into patients
+                from visit in context.Visit
+                join patient in context.Patient on visit.PatientId equals patient.PatientId into patients
                 from patient in patients.DefaultIfEmpty()
                 select new
                 {
@@ -30,7 +24,7 @@ namespace CMS.Controllers
 
             var visitsWithEmployeesQuery =
                 from vp in visitsWithPatientsQuery
-                join employee in _db.Employee on vp.visit.EmployeeId equals employee.EmployeeId into employees
+                join employee in context.Employee on vp.visit.EmployeeId equals employee.EmployeeId into employees
                 from employee in employees.DefaultIfEmpty()
                 select new VisitViewModel
                 {
@@ -53,7 +47,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var visit = await _db.Visit
+            var visit = await context.Visit
                 .FirstOrDefaultAsync(m => m.VisitId == id);
             if (visit == null)
             {
@@ -69,8 +63,8 @@ namespace CMS.Controllers
             VisitPatientEmployeeViewModel viewModel = new()
             {
                 Visit = new() { VisitTime = DateTime.Today },
-                Patients = await _db.Patient.ToListAsync(),
-                Employees = await _db.Employee.ToListAsync()
+                Patients = await context.Patient.ToListAsync(),
+                Employees = await context.Employee.ToListAsync()
             };
 
             return View(viewModel);
@@ -81,8 +75,8 @@ namespace CMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Add(visit);
-                await _db.SaveChangesAsync();
+                context.Add(visit);
+                await context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
@@ -98,7 +92,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var visit = await _db.Visit.FindAsync(id);
+            var visit = await context.Visit.FindAsync(id);
             if (visit == null)
             {
                 return NotFound();
@@ -107,8 +101,8 @@ namespace CMS.Controllers
             VisitPatientEmployeeViewModel visitDetails = new()
             {
                 Visit = visit,
-                Patients = await _db.Patient.ToListAsync(),
-                Employees = await _db.Employee.ToListAsync()
+                Patients = await context.Patient.ToListAsync(),
+                Employees = await context.Employee.ToListAsync()
             };
 
             return View(visitDetails);
@@ -130,8 +124,8 @@ namespace CMS.Controllers
             {
                 try
                 {
-                    _db.Update(visit);
-                    await _db.SaveChangesAsync();
+                    context.Update(visit);
+                    await context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -157,7 +151,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var visitModel = await _db.Visit
+            var visitModel = await context.Visit
                 .FirstOrDefaultAsync(m => m.VisitId == id);
             if (visitModel == null)
             {
@@ -172,19 +166,19 @@ namespace CMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var visit = await _db.Visit.FindAsync(id);
+            var visit = await context.Visit.FindAsync(id);
             if (visit != null)
             {
-                _db.Visit.Remove(visit);
+                context.Visit.Remove(visit);
             }
 
-            await _db.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool VisitExists(int id)
         {
-            return _db.Visit.Any(e => e.VisitId == id);
+            return context.Visit.Any(e => e.VisitId == id);
         }
     }
 }

@@ -5,21 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Controllers
 {
-    public class EmployeeController : Controller
+    public class EmployeeController(ApplicationDbContext context) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public EmployeeController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        [BindProperty]
+        public IFormFile? Photo { get; set; }
 
         // GET: EmployeeModels
         public async Task<IActionResult> Index(string? employee)
         {
             var employees = string.IsNullOrEmpty(employee)
-                ? await _context.Employee.ToListAsync()
-                : await _context.GetPersonByName<Employee>(employee);
+                ? await context.Employee.ToListAsync()
+                : await context.GetPersonByName<Employee>(employee);
 
             return View(employees);
         }
@@ -32,7 +28,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employee
+            var employee = await context.Employee
                 .FirstOrDefaultAsync(m => m.EmployeeId == id);
             if (employee == null)
             {
@@ -57,10 +53,19 @@ namespace CMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(employee);
-                await _context.SaveChangesAsync();
+                if (Photo != null)
+                {
+                    using var memoryStream = new MemoryStream();
+                    await Photo.CopyToAsync(memoryStream);
+                    employee.Photo = memoryStream.ToArray();
+                }
+
+                context.Add(employee);
+                await context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(employee);
         }
 
@@ -72,7 +77,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await context.Employee.FindAsync(id);
             if (employee == null)
             {
                 return NotFound();
@@ -96,8 +101,8 @@ namespace CMS.Controllers
             {
                 try
                 {
-                    _context.Update(employee);
-                    await _context.SaveChangesAsync();
+                    context.Update(employee);
+                    await context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,7 +128,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employee
+            var employee = await context.Employee
                 .FirstOrDefaultAsync(m => m.EmployeeId == id);
             if (employee == null)
             {
@@ -138,19 +143,19 @@ namespace CMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var employee = await _context.Employee.FindAsync(id);
+            var employee = await context.Employee.FindAsync(id);
             if (employee != null)
             {
-                _context.Employee.Remove(employee);
+                context.Employee.Remove(employee);
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool EmployeeExists(int id)
         {
-            return _context.Employee.Any(e => e.EmployeeId == id);
+            return context.Employee.Any(e => e.EmployeeId == id);
         }
     }
 }
