@@ -5,21 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Controllers
 {
-    public class PatientController : Controller
+    public class PatientController(ApplicationDbContext context) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public PatientController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        [BindProperty]
+        public IFormFile? Photo { get; set; }
 
         // GET: PatientModels
         public async Task<IActionResult> Index(string? patient)
         {
             var patients = string.IsNullOrEmpty(patient)
-                ? await _context.Patient.ToListAsync()
-                : await _context.GetPersonByName<Patient>(patient);
+                ? await context.Patient.ToListAsync()
+                : await context.GetPersonByName<Patient>(patient);
 
             return View(patients);
         }
@@ -32,7 +28,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var patientModel = await _context.Patient
+            var patientModel = await context.Patient
                 .FirstOrDefaultAsync(m => m.PatientId == id);
             if (patientModel == null)
             {
@@ -57,10 +53,19 @@ namespace CMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(patient);
-                await _context.SaveChangesAsync();
+                if (Photo != null)
+                {
+                    using var memoryStream = new MemoryStream();
+                    await Photo.CopyToAsync(memoryStream);
+                    patient.Photo = memoryStream.ToArray();
+                }
+
+                context.Add(patient);
+                await context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(patient);
         }
 
@@ -72,7 +77,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patient.FindAsync(id);
+            var patient = await context.Patient.FindAsync(id);
             if (patient == null)
             {
                 return NotFound();
@@ -96,8 +101,8 @@ namespace CMS.Controllers
             {
                 try
                 {
-                    _context.Update(patient);
-                    await _context.SaveChangesAsync();
+                    context.Update(patient);
+                    await context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,7 +128,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var patient = await _context.Patient
+            var patient = await context.Patient
                 .FirstOrDefaultAsync(m => m.PatientId == id);
             if (patient == null)
             {
@@ -138,19 +143,19 @@ namespace CMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var patient = await _context.Patient.FindAsync(id);
+            var patient = await context.Patient.FindAsync(id);
             if (patient != null)
             {
-                _context.Patient.Remove(patient);
+                context.Patient.Remove(patient);
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PatientExists(int id)
         {
-            return _context.Patient.Any(e => e.PatientId == id);
+            return context.Patient.Any(e => e.PatientId == id);
         }
     }
 }

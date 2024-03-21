@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CMS.Models.Interfaces;
+﻿using CMS.Models.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace CMS.Models
 {
@@ -15,6 +15,8 @@ namespace CMS.Models
         public DateTime Birthday { get; set; }
 
         public string FullName => $"{Name} {Surname}".Trim();
+
+        public byte[]? Photo { get; set; }
 
         public Patient()
         {
