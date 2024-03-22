@@ -5,7 +5,7 @@
 }
 
 <h1>Manage employees</h1>
-
+<hr />
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <a asp-action="Create" class="btn btn-primary">Add new</a>
@@ -38,27 +38,23 @@
             </tr>
         </thead>
         <tbody>
-    @foreach (var item in Model) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Surname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Birthday)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Profession)
-                </td>
-                <td>
-                    <a asp-action="Edit" class="btn btn-secondary" asp-route-id="@item.EmployeeId">Edit</a> |
-                    <a asp-action="Details" class="btn btn-secondary" asp-route-id="@item.EmployeeId">Details</a> |
-                    <a asp-action="Delete" class="btn btn-secondary" asp-route-id="@item.EmployeeId">Delete</a>
-                </td>
-            </tr>
-    }
+            @foreach (var item in Model) 
+            {
+                <tr onclick="location.href='@Url.Action("Details", "Employee", new { id = item.EmployeeId })';" style="cursor:pointer;">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Surname)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Birthday)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Profession)
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 }

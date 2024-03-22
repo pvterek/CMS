@@ -12,7 +12,6 @@
 }
 
 <h1>@Model.Name @Model.Surname - Details</h1>
-
 <div>
     <hr />
     @if (imgSrc != null)
@@ -40,7 +39,7 @@
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.PatientId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="spacing">
+    <a asp-action="Edit" class="btn btn-primary" asp-route-id="@Model.PatientId">Edit</a>
+    <a asp-action="Delete" class="btn btn-danger" asp-route-id="@Model.PatientId">Delete</a>
 </div>

@@ -54,7 +54,14 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            return View(visit);
+            VisitViewModel viewModel = new()
+            {
+                Visit = visit,
+                Patient = await context.Patient.FirstOrDefaultAsync(p => p.PatientId == visit.PatientId),
+                Employee = await context.Employee.FirstOrDefaultAsync(e => e.EmployeeId == visit.EmployeeId)
+            };
+
+            return View(viewModel);
         }
 
         // GET: VisitModels/Create

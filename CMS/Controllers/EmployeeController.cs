@@ -99,6 +99,13 @@ namespace CMS.Controllers
 
             if (ModelState.IsValid)
             {
+                if (Photo != null)
+                {
+                    using var memoryStream = new MemoryStream();
+                    await Photo.CopyToAsync(memoryStream);
+                    employee.Photo = memoryStream.ToArray();
+                }
+
                 try
                 {
                     context.Update(employee);
