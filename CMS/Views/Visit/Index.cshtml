@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CMS.ViewModels.VisitViewModel>
+﻿@model IEnumerable<CMS.Models.Visit>
 @{
     ViewData["Title"] = "Manage visits";
 }
@@ -16,22 +16,22 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Visit.VisitTime)
+                    @Html.DisplayNameFor(model => model.VisitTime)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Patient.FullName)
+                    @Html.DisplayNameFor(model => model.Patient)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Employee.FullName)
+                    @Html.DisplayNameFor(model => model.Employee)
                 </th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                <tr onclick="location.href='@Url.Action("Details", "Visit", new { id = item.Visit.VisitId })';" style="cursor:pointer;">
+                <tr onclick="location.href='@Url.Action("Details", "Visit", new { id = item.VisitId })';" style="cursor:pointer;">
                     <td>
-                        @item.Visit.VisitTime
+                        @item.VisitTime
                     </td>
                     <td>
                         @item.Patient.FullName
