@@ -1,7 +1,7 @@
 ﻿@model CMS.ViewModels.CalendarViewModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 
     string prevDate = Model.CurrentDate.AddDays(-1).ToString("yyyy-MM-dd");
     string nextDate = Model.CurrentDate.AddDays(1).ToString("yyyy-MM-dd");
@@ -9,7 +9,7 @@
 
 <h1>Dashboard</h1>
 
-<form asp-controller="Home" asp-action="Index" method="get" class="date-picker-form">
+<form asp-controller="Dashboard" asp-action="Index" method="get" class="date-picker-form">
     <div class="text-center d-flex justify-content-center align-items-center">
         <a asp-action="Index" asp-route-date="@prevDate" class="btn btn-secondary" aria-label="Previous Day">Previous day</a>
         <input type="date" id="datePicker" name="date" class="form-control mx-2" value="@Model.CurrentDate.ToString("yyyy-MM-dd")" aria-label="Select a date" />
