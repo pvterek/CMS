@@ -12,28 +12,10 @@ namespace CMS.Controllers
         // GET: VisitModels
         public async Task<IActionResult> Index()
         {
-            var visitsWithPatientsQuery =
-                from visit in context.Visit
-                join patient in context.Patient on visit.PatientId equals patient.PatientId into patients
-                from patient in patients.DefaultIfEmpty()
-                select new
-                {
-                    visit,
-                    patient
-                };
-
-            var visitsWithEmployeesQuery =
-                from vp in visitsWithPatientsQuery
-                join employee in context.Employee on vp.visit.EmployeeId equals employee.EmployeeId into employees
-                from employee in employees.DefaultIfEmpty()
-                select new VisitViewModel
-                {
-                    Visit = vp.visit,
-                    Patient = vp.patient,
-                    Employee = employee
-                };
-
-            var visits = await visitsWithEmployeesQuery.ToListAsync();
+            var visits = await context.Visit
+                .Include(v => v.Patient)
+                .Include(v => v.Employee)
+                .ToListAsync();
 
             return View(visits);
         }
@@ -48,20 +30,16 @@ namespace CMS.Controllers
             }
 
             var visit = await context.Visit
+                .Include(v => v.Patient)
+                .Include(v => v.Employee)
                 .FirstOrDefaultAsync(m => m.VisitId == id);
+
             if (visit == null)
             {
                 return NotFound();
             }
 
-            VisitViewModel viewModel = new()
-            {
-                Visit = visit,
-                Patient = await context.Patient.FirstOrDefaultAsync(p => p.PatientId == visit.PatientId),
-                Employee = await context.Employee.FirstOrDefaultAsync(e => e.EmployeeId == visit.EmployeeId)
-            };
-
-            return View(viewModel);
+            return View(visit);
         }
 
         // GET: VisitModels/Create
@@ -78,7 +56,8 @@ namespace CMS.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Visit visit)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("VisitId,PatientId,EmployeeId,VisitTime")] Visit visit)
         {
             if (ModelState.IsValid)
             {
@@ -145,8 +124,10 @@ namespace CMS.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(visit);
         }
 
@@ -158,14 +139,17 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var visitModel = await context.Visit
+            var visit = await context.Visit
+                .Include(v => v.Patient)
+                .Include(v => v.Employee)
                 .FirstOrDefaultAsync(m => m.VisitId == id);
-            if (visitModel == null)
+
+            if (visit == null)
             {
                 return NotFound();
             }
 
-            return View(visitModel);
+            return View(visit);
         }
 
         // POST: VisitModels/Delete/5

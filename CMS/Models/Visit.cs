@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CMS.Models
 {
@@ -11,14 +12,18 @@ namespace CMS.Models
         [Required(ErrorMessage = "Please select a patient.")]
         public int PatientId { get; set; }
 
+        [ForeignKey("PatientId")]
+        public virtual Patient? Patient { get; set; } //this shouldn't be nullable, but for now i don't know how to make it better
+
         [Required(ErrorMessage = "Please select an employee.")]
         public int EmployeeId { get; set; }
+
+        [ForeignKey("EmployeeId")]
+        public virtual Employee? Employee { get; set; } //this shouldn't be nullable, but for now i don't know how to make it better
 
         [Required(ErrorMessage = "Please enter a visit time.")]
         [DisplayName("Time of the visit")]
         public DateTime VisitTime { get; set; }
-
-        //public int AddedBy { get; set; }
 
         public Visit()
         {

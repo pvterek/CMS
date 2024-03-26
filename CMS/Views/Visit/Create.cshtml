@@ -11,7 +11,7 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Visit.PatientId" class="control-label"></label>
+                <label asp-for="Visit.PatientId" class="control-label">Patient</label>
                 <select asp-for="Visit.PatientId" class="form-control">
                     <option value="">-- Select patient --</option>
                     @foreach (var item in Model.Patients)
@@ -22,7 +22,7 @@
                 <span asp-validation-for="Visit.PatientId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Visit.EmployeeId" class="control-label"></label>
+                <label asp-for="Visit.EmployeeId" class="control-label">Employee</label>
                 <select asp-for="Visit.EmployeeId" class="form-control">
                     <option value="">-- Select employee --</option>
                     @foreach (var item in Model.Employees)
@@ -33,7 +33,7 @@
                 <span asp-validation-for="Visit.EmployeeId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Visit.VisitTime" class="control-label"></label>
+                <label asp-for="Visit.VisitTime" class="control-label">Time of the visit</label>
                 <input asp-for="Visit.VisitTime" class="form-control" />
                 <span asp-validation-for="Visit.VisitTime" class="text-danger"></span>
             </div>
