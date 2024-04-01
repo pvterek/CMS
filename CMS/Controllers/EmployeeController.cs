@@ -1,20 +1,19 @@
 ﻿using CMS.Data;
 using CMS.Models;
+using CMS.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace CMS.Controllers
 {
     public class EmployeeController(ApplicationDbContext context) : Controller
     {
-        [BindProperty]
-        public IFormFile? Photo { get; set; }
-
         // GET: EmployeeModels
         public async Task<IActionResult> Index(string? employee)
         {
             var employees = string.IsNullOrEmpty(employee)
-                ? await context.Employee.ToListAsync()
+                ? await context.Employee.Include(e => e.Profession).ToListAsync()
                 : await context.GetPersonByName<Employee>(employee);
 
             return View(employees);
@@ -29,7 +28,8 @@ namespace CMS.Controllers
             }
 
             var employee = await context.Employee
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
+                .Include(e => e.Profession)
+                .FirstOrDefaultAsync(e => e.EmployeeId == id);
             if (employee == null)
             {
                 return NotFound();
@@ -39,9 +39,14 @@ namespace CMS.Controllers
         }
 
         // GET: EmployeeModels/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            EmployeeProfessionView viewModel = new()
+            {
+                Professions = await context.Profession.ToListAsync()
+            };
+
+            return View(viewModel);
         }
 
         // POST: EmployeeModels/Create
@@ -49,24 +54,27 @@ namespace CMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeId,Name,Surname,Birthday,Profession")] Employee employee)
+        public async Task<IActionResult> Create([Bind("Employee,Photo")] EmployeeProfessionView viewModel)
         {
-            if (ModelState.IsValid)
+            var (employee, photo) = (viewModel.Employee, viewModel.Photo);
+
+            employee.Profession = await context.Profession.FirstOrDefaultAsync(m => m.ProfessionId == employee.ProfessionId);
+
+            if (!ValidateEmployee(employee))
             {
-                if (Photo != null)
-                {
-                    using var memoryStream = new MemoryStream();
-                    await Photo.CopyToAsync(memoryStream);
-                    employee.Photo = memoryStream.ToArray();
-                }
-
-                context.Add(employee);
-                await context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                viewModel.Professions = await context.Profession.ToListAsync();
+                return View(viewModel);
             }
 
-            return View(employee);
+            if (photo != null)
+            {
+                SavePhotoToEmployee(photo, employee);
+            }
+
+            context.Add(employee);
+            await context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: EmployeeModels/Edit/5
@@ -82,7 +90,14 @@ namespace CMS.Controllers
             {
                 return NotFound();
             }
-            return View(employee);
+
+            var viewModel = new EmployeeProfessionView
+            {
+                Employee = employee,
+                Professions = await context.Profession.ToListAsync()
+            };
+
+            return View(viewModel);
         }
 
         // POST: EmployeeModels/Edit/5
@@ -90,20 +105,22 @@ namespace CMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,Name,Surname,Birthday,Profession")] Employee employee)
+        public async Task<IActionResult> Edit(int id, [Bind("Employee,Photo")] EmployeeProfessionView viewModel)
         {
+            var (employee, photo) = (viewModel.Employee, viewModel.Photo);
+
             if (id != employee.EmployeeId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            employee.Profession = await context.Profession.FirstOrDefaultAsync(m => m.ProfessionId == employee.ProfessionId);
+
+            if (ValidateEmployee(employee))
             {
-                if (Photo != null)
+                if (photo != null)
                 {
-                    using var memoryStream = new MemoryStream();
-                    await Photo.CopyToAsync(memoryStream);
-                    employee.Photo = memoryStream.ToArray();
+                    SavePhotoToEmployee(photo, employee);
                 }
 
                 try
@@ -111,20 +128,16 @@ namespace CMS.Controllers
                     context.Update(employee);
                     await context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException) when (!EmployeeExists(employee.EmployeeId))
                 {
-                    if (!EmployeeExists(employee.EmployeeId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+
+            viewModel.Professions = await context.Profession.ToListAsync();
+            return View(viewModel);
         }
 
         // GET: EmployeeModels/Delete/5
@@ -136,7 +149,8 @@ namespace CMS.Controllers
             }
 
             var employee = await context.Employee
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
+                .Include(e => e.Profession)
+                .FirstOrDefaultAsync(e => e.EmployeeId == id);
             if (employee == null)
             {
                 return NotFound();
@@ -163,6 +177,18 @@ namespace CMS.Controllers
         private bool EmployeeExists(int id)
         {
             return context.Employee.Any(e => e.EmployeeId == id);
+        }
+
+        private bool ValidateEmployee(Employee employee)
+        {
+            return Validator.TryValidateObject(employee, new ValidationContext(employee), null, true);
+        }
+
+        private void SavePhotoToEmployee(IFormFile photo, Employee employee)
+        {
+            using var memoryStream = new MemoryStream();
+            photo.CopyTo(memoryStream);
+            employee.Photo = memoryStream.ToArray();
         }
     }
 }
