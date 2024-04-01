@@ -13,13 +13,13 @@ namespace CMS.Models
         public int PatientId { get; set; }
 
         [ForeignKey("PatientId")]
-        public virtual Patient Patient { get; set; } //this shouldn't be nullable, but for now i don't know how to make it better
+        public virtual Patient Patient { get; set; }
 
         [Required(ErrorMessage = "Please select an employee.")]
         public int EmployeeId { get; set; }
 
         [ForeignKey("EmployeeId")]
-        public virtual Employee Employee { get; set; } //this shouldn't be nullable, but for now i don't know how to make it better
+        public virtual Employee Employee { get; set; }
 
         [Required(ErrorMessage = "Please enter a visit time.")]
         [DisplayName("Time of the visit")]

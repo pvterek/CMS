@@ -3,6 +3,7 @@ using CMS.Models;
 using CMS.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace CMS.Controllers
 {
@@ -57,17 +58,19 @@ namespace CMS.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VisitId,PatientId,EmployeeId,VisitTime")] Visit visit)
+        public async Task<IActionResult> Create([Bind("Visit")] VisitPatientEmployeeViewModel viewModel)
         {
-            if (ModelState.IsValid)
-            {
-                context.Add(visit);
-                await context.SaveChangesAsync();
+            var visit = viewModel.Visit;
 
-                return RedirectToAction(nameof(Index));
+            if (!ValidateVisit(visit))
+            {
+                return View(viewModel);
             }
 
-            return View(visit);
+            context.Add(visit);
+            await context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: VisitModels/Edit/5
@@ -99,36 +102,31 @@ namespace CMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VisitId,PatientId,EmployeeId,VisitTime")] Visit visit)
+        public async Task<IActionResult> Edit(int id, [Bind("Visit")] VisitPatientEmployeeViewModel viewModel)
         {
+            var visit = viewModel.Visit;
+
             if (id != visit.VisitId)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (ValidateVisit(visit))
             {
                 try
                 {
                     context.Update(visit);
                     await context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateConcurrencyException) when (!VisitExists(visit.VisitId))
                 {
-                    if (!VisitExists(visit.VisitId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(visit);
+            return View(viewModel);
         }
 
         // GET: VisitModels/Delete/5
@@ -170,6 +168,11 @@ namespace CMS.Controllers
         private bool VisitExists(int id)
         {
             return context.Visit.Any(e => e.VisitId == id);
+        }
+
+        private bool ValidateVisit(Visit visit)
+        {
+            return Validator.TryValidateObject(visit, new ValidationContext(visit), null, true);
         }
     }
 }
