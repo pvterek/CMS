@@ -58,11 +58,8 @@ namespace CMS.Controllers
         {
             var (employee, photo) = (viewModel.Employee, viewModel.Photo);
 
-            employee.Profession = await context.Profession.FirstOrDefaultAsync(m => m.ProfessionId == employee.ProfessionId);
-
             if (!ValidateEmployee(employee))
             {
-                viewModel.Professions = await context.Profession.ToListAsync();
                 return View(viewModel);
             }
 
@@ -114,8 +111,6 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            employee.Profession = await context.Profession.FirstOrDefaultAsync(m => m.ProfessionId == employee.ProfessionId);
-
             if (ValidateEmployee(employee))
             {
                 if (photo != null)
@@ -136,7 +131,6 @@ namespace CMS.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            viewModel.Professions = await context.Profession.ToListAsync();
             return View(viewModel);
         }
 
