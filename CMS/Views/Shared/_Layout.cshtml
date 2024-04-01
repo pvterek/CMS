@@ -13,10 +13,29 @@
         <div class="bg-light border-right" id="sidebar-wrapper">
             <div class="sidebar-heading">CMS</div>
             <div class="list-group list-group-flush">
-                <a class="list-group-item list-group-item-action bg-light" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-                <a class="list-group-item list-group-item-action bg-light" asp-area="" asp-controller="Visit" asp-action="Index">Visits</a>
-                <a class="list-group-item list-group-item-action bg-light" asp-area="" asp-controller="Patient" asp-action="Index">Patients</a>
-                <a class="list-group-item list-group-item-action bg-light" asp-area="" asp-controller="Employee" asp-action="Index">Employees</a>
+                <a class="list-group-item list-group-item-action bg-light" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                <div class="dropdown">
+                    <a class="list-group-item list-group-item-action bg-light dropdown-toggle" asp-controller="Visit" asp-action="Index">Visits</a>
+                    <div class="dropdown-menu" aria-labelledby="visitDropdownMenuLink">
+                        <a class="dropdown-item" asp-controller="Visit" asp-action="Index">Display</a>
+                        <a class="dropdown-item" asp-controller="Visit" asp-action="Create">Create</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <a class="list-group-item list-group-item-action bg-light dropdown-toggle" asp-controller="Patient" asp-action="Index">Patients</a>
+                    <div class="dropdown-menu" aria-labelledby="visitDropdownMenuLink">
+                        <a class="dropdown-item" asp-area="" asp-controller="Patient" asp-action="Index">Display</a>
+                        <a class="dropdown-item" asp-area="" asp-controller="Patient" asp-action="Create">Create</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <a class="list-group-item list-group-item-action bg-light dropdown-toggle" asp-controller="Employee" asp-action="Index">Employees</a>
+                    <div class="dropdown-menu" aria-labelledby="visitDropdownMenuLink">
+                        <a class="dropdown-item" asp-controller="Employee" asp-action="Index">Display</a>
+                        <a class="dropdown-item" asp-controller="Employee" asp-action="Create">Create</a>
+                        <a class="dropdown-item" asp-controller="Profession" asp-action="Index">Professions</a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -41,7 +60,7 @@
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

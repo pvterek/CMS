@@ -8,8 +8,12 @@ namespace CMS.Data
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
     {
         public DbSet<Patient> Patient { get; set; } = default!;
+
         public DbSet<Employee> Employee { get; set; } = default!;
+
         public DbSet<Visit> Visit { get; set; } = default!;
+
+        public DbSet<Profession> Profession { get; set; } = default!;
 
         public async Task<List<Visit>> GetVisitsForDateRange(DateTime startDate, DateTime endDate)
         {
@@ -35,6 +39,11 @@ namespace CMS.Data
         {
             var dbSet = GetDbSet<T>();
             var query = dbSet.AsQueryable();
+
+            if (typeof(T) == typeof(Employee))
+            {
+                query = query.Include(nameof(Profession));
+            }
 
             return await query.Where(p => EF.Functions.Like(p.Name, $"%{name}%") || EF.Functions.Like(p.Surname, $"%{name}%")).ToListAsync();
         }

@@ -1,4 +1,4 @@
-﻿@model CMS.Models.Employee
+﻿@model CMS.ViewModels.EmployeeProfessionView
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,26 +10,32 @@
     <div class="col-md-4">
         <form asp-action="Edit" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="EmployeeId" />
+            <input type="hidden" asp-for="Employee.EmployeeId" />
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Employee.Name" class="control-label"></label>
+                <input asp-for="Employee.Name" class="form-control" />
+                <span asp-validation-for="Employee.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Surname" class="control-label"></label>
-                <input asp-for="Surname" class="form-control" />
-                <span asp-validation-for="Surname" class="text-danger"></span>
+                <label asp-for="Employee.Surname" class="control-label"></label>
+                <input asp-for="Employee.Surname" class="form-control" />
+                <span asp-validation-for="Employee.Surname" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Birthday" class="control-label"></label>
-                <input asp-for="Birthday" class="form-control" />
-                <span asp-validation-for="Birthday" class="text-danger"></span>
+                <label asp-for="Employee.Birthday" class="control-label"></label>
+                <input asp-for="Employee.Birthday" class="form-control" />
+                <span asp-validation-for="Employee.Birthday" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Profession" class="control-label"></label>
-                <input asp-for="Profession" class="form-control" />
-                <span asp-validation-for="Profession" class="text-danger"></span>
+            <div class="form-group spacing">
+                <label asp-for="Employee.ProfessionId" class="control-label">Profession</label>
+                <select asp-for="Employee.ProfessionId" class="form-control">
+                    <option value="">-- Select profession --</option>
+                    @foreach (var item in Model.Professions)
+                    {
+                        <option value="@item.ProfessionId">@item.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="Employee.ProfessionId" class="text-danger"></span>
             </div>
             <div class="form-group spacing">
                 <label asp-for="Photo" class="control-label">Photo</label><br />
@@ -41,7 +47,3 @@
         </form>
     </div>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
