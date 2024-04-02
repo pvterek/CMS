@@ -1,4 +1,5 @@
-﻿using CMS.Models.Interfaces;
+﻿using CMS.Models.CustomValidationAttribute;
+using CMS.Models.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace CMS.Models
@@ -15,6 +16,8 @@ namespace CMS.Models
         public string Surname { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
+        [DateTimeRange(DateTimeRangeMode.Birthday)]
         public DateTime Birthday { get; set; }
 
         public string FullName => $"{Name} {Surname}".Trim();

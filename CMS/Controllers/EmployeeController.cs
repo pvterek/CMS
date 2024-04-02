@@ -41,10 +41,7 @@ namespace CMS.Controllers
         // GET: EmployeeModels/Create
         public async Task<IActionResult> Create()
         {
-            EmployeeProfessionView viewModel = new()
-            {
-                Professions = await context.Profession.ToListAsync()
-            };
+            var viewModel = await PopulateViewModel();
 
             return View(viewModel);
         }
@@ -54,24 +51,25 @@ namespace CMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Employee,Photo")] EmployeeProfessionView viewModel)
+        public async Task<IActionResult> Create([Bind("Employee,Photo")] EmployeeProfessionViewModel viewModel)
         {
             var (employee, photo) = (viewModel.Employee, viewModel.Photo);
 
-            if (!ValidateEmployee(employee))
+            if (ValidateEmployee(employee))
             {
-                return View(viewModel);
+                if (photo != null)
+                {
+                    SavePhotoToEmployee(photo, employee);
+                }
+
+                context.Add(employee);
+                await context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
             }
 
-            if (photo != null)
-            {
-                SavePhotoToEmployee(photo, employee);
-            }
-
-            context.Add(employee);
-            await context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            viewModel = await PopulateViewModel(employee);
+            return View(viewModel);
         }
 
         // GET: EmployeeModels/Edit/5
@@ -88,12 +86,7 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            var viewModel = new EmployeeProfessionView
-            {
-                Employee = employee,
-                Professions = await context.Profession.ToListAsync()
-            };
-
+            var viewModel = await PopulateViewModel(employee);
             return View(viewModel);
         }
 
@@ -102,7 +95,7 @@ namespace CMS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Employee,Photo")] EmployeeProfessionView viewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Employee,Photo")] EmployeeProfessionViewModel viewModel)
         {
             var (employee, photo) = (viewModel.Employee, viewModel.Photo);
 
@@ -131,6 +124,7 @@ namespace CMS.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            viewModel = await PopulateViewModel(employee);
             return View(viewModel);
         }
 
@@ -183,6 +177,17 @@ namespace CMS.Controllers
             using var memoryStream = new MemoryStream();
             photo.CopyTo(memoryStream);
             employee.Photo = memoryStream.ToArray();
+        }
+
+        private async Task<EmployeeProfessionViewModel> PopulateViewModel(Employee employee = null)
+        {
+            var viewModel = new EmployeeProfessionViewModel
+            {
+                Employee = employee,
+                Professions = await context.Profession.ToListAsync()
+            };
+
+            return viewModel;
         }
     }
 }

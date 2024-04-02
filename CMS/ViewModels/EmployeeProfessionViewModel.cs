@@ -2,7 +2,7 @@
 
 namespace CMS.ViewModels
 {
-    public class EmployeeProfessionView
+    public class EmployeeProfessionViewModel
     {
         public Employee Employee { get; set; }
 
