@@ -21,23 +21,23 @@
                 </select>
                 <span asp-validation-for="Visit.PatientId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group spacing">
                 <label asp-for="Visit.EmployeeId" class="control-label">Employee</label>
                 <select asp-for="Visit.EmployeeId" class="form-control">
                     <option value="">-- Select employee --</option>
                     @foreach (var item in Model.Employees)
                     {
-                        <option value="@item.EmployeeId">@item.Name</option>
+                        <option value="@item.EmployeeId">@item.FullName</option>
                     }
                 </select>
                 <span asp-validation-for="Visit.EmployeeId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group spacing">
                 <label asp-for="Visit.VisitTime" class="control-label">Time of the visit</label>
                 <input asp-for="Visit.VisitTime" class="form-control" />
                 <span asp-validation-for="Visit.VisitTime" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group spacing">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>

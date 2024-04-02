@@ -46,13 +46,7 @@ namespace CMS.Controllers
         // GET: VisitModels/Create
         public async Task<IActionResult> Create()
         {
-            VisitPatientEmployeeViewModel viewModel = new()
-            {
-                Visit = new() { VisitTime = DateTime.Today },
-                Patients = await context.Patient.ToListAsync(),
-                Employees = await context.Employee.ToListAsync()
-            };
-
+            var viewModel = await PopulateViewModel(new() { VisitTime = DateTime.Today });
             return View(viewModel);
         }
 
@@ -62,15 +56,16 @@ namespace CMS.Controllers
         {
             var visit = viewModel.Visit;
 
-            if (!ValidateVisit(visit))
+            if (ValidateVisit(visit))
             {
-                return View(viewModel);
+                context.Add(visit);
+                await context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
             }
 
-            context.Add(visit);
-            await context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            viewModel = await PopulateViewModel(viewModel.Visit);
+            return View(viewModel);
         }
 
         // GET: VisitModels/Edit/5
@@ -87,14 +82,8 @@ namespace CMS.Controllers
                 return NotFound();
             }
 
-            VisitPatientEmployeeViewModel visitDetails = new()
-            {
-                Visit = visit,
-                Patients = await context.Patient.ToListAsync(),
-                Employees = await context.Employee.ToListAsync()
-            };
-
-            return View(visitDetails);
+            var viewModel = await PopulateViewModel(visit);
+            return View(viewModel);
         }
 
         // POST: VisitModels/Edit/5
@@ -126,6 +115,7 @@ namespace CMS.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            viewModel = await PopulateViewModel(viewModel.Visit);
             return View(viewModel);
         }
 
@@ -173,6 +163,18 @@ namespace CMS.Controllers
         private bool ValidateVisit(Visit visit)
         {
             return Validator.TryValidateObject(visit, new ValidationContext(visit), null, true);
+        }
+
+        private async Task<VisitPatientEmployeeViewModel> PopulateViewModel(Visit visit)
+        {
+            var viewModel = new VisitPatientEmployeeViewModel
+            {
+                Visit = visit,
+                Patients = await context.Patient.ToListAsync(),
+                Employees = await context.Employee.ToListAsync()
+            };
+
+            return viewModel;
         }
     }
 }
