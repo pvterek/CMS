@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using CMS.Models.CustomValidationAttribute;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,6 +24,7 @@ namespace CMS.Models
 
         [Required(ErrorMessage = "Please enter a visit time.")]
         [DisplayName("Time of the visit")]
+        [DateTimeRange(DateTimeRangeMode.Visit)]
         public DateTime VisitTime { get; set; }
 
         public Visit()
